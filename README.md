@@ -4,20 +4,14 @@ O robô de sinais **PyTradeGenius_Bybit_Bot** realiza o monitoramento dos **Múl
 
 ## Referências
 
-### Código no meu github
-<div align="center">
-<img src ="" alt="Image" style="max-width: 40%;">
-</div>
-*  <a href="" rel="nofollow" target="_blank">Código no github</a>
-
 ### Imagem do grupo do telegram
 <div align="center">
-<img src ="https://raw.githubusercontent.com/HeberSilverio/PyHbSinaisTelegramMultipleAssets/main/img/PyHbSinaisTelegramMultipleAssets.JPG" alt="Image" style="max-width: 40%;">
+<img src ="https://raw.githubusercontent.com/HeberSilverio/PyTradeGenius_Bybit_Bot/main/img/imageTelegram.JPG" alt="Image" style="max-width: 40%;">
 </div>
 
 ## ⌨️ Como executar o projeto
 ```* Clonando o repositório
-git clone https://github.com/HeberSilverio/PyTradeGenius_Bin_Bot.git
+git clone https://github.com/HeberSilverio/PyTradeGenius_Bybit_Bot.git
 
 
 # Execute o arquivo python com o comando
@@ -40,7 +34,7 @@ Desenvolvido por **Héber Silvério** </br>
 
 ## **MANUAL DE UTILIZAÇÃO**
 
-No arquivo **"config.py"** deverá ser inserida a **API_KEY** da sua conta Binance juntamente de sua senha **API_ SECRET**. Ambos podem ser obtidos nas configurações da sua conta Binance, adentrando na opção **API Management**.
+No arquivo **"config.py"** deverá ser inserida a **API_KEY** da sua conta Bybit juntamente de sua senha **API_ SECRET**. Ambos podem ser obtidos nas configurações da sua conta Bybit, adentrando na opção **API Management**.
 <div align="center">
 <img src = "https://raw.githubusercontent.com/HeberSilverio/PyHbSinais/main/img/secrets.png">
 </div>
@@ -79,16 +73,6 @@ O número do Chat_Id aparece na string: {"message_id":xxx,"from":{"id":**Número
 
 
 
-### Exeplos de códigos no repositório GitHub da Binance
-<a target="_blank" rel="noopener noreferrer" href="gif do vídeo">
-    <img src="https://raw.githubusercontent.com/HeberSilverio/PyTradeGenius_Bin_Bot/main/img/exemplos_de_codigos.JPG" alt="Exemplos de códigos" style="max-width: 40%;">
-</a> </br>
-
-*  <a href="https://github.com/binance/binance-futures-connector-python/blob/main/examples/um_futures/trade/get_balance.py" target="_blank">Códigos exemplos da binance futuros</a> 
-
-</br></br>
-
-
 ## **MANUAL DE DESENVOLVIMENTO**
 Inicie seu projeto instalando as bibliotecas necessárias
 É necessário instalar a biblioteca da Pybit. Digite no terminal: 
@@ -102,13 +86,10 @@ Instale a biblioteca de indicadores TA
 `pip install ta`
 
 
-Utilizei exemplos de códigos da documentação da binance que encontrei <a href="[url do site indicado](https://github.com/binance/binance-futures-connector-python/tree/main/examples/um_futures/trade)" rel="nofollow" target="_blank">aqui.</a> 
-
-
-Foi sugerido utilizar esta biblioteca de indicadores - <a href="https://github.com/binance/binance-futures-connector-python/tree/main/examples/um_futures/trade" rel="nofollow" target="_blank">Biblioteca de análise técnica em python</a> 
+### Foi sugerido utilizar esta biblioteca de indicadores - Biblioteca de análise técnica em python 
 
 <a target="_blank" rel="noopener noreferrer" href="gif do vídeo">
-    <img src="https://raw.githubusercontent.com/HeberSilverio/PyTradeGenius_Bin_Bot/main/img/biblioteca%20de%20indicadores%20python.JPG" alt="Biblioteca de indicadores" style="max-width: 100%;">
+    <img src="https://raw.githubusercontent.com/HeberSilverio/PyTradeGenius_Bin_Bot/main/img/biblioteca%20de%20indicadores%20python.JPG" alt="Biblioteca de indicadores" style="max-width: 20%;">
 </a> </br>
 
 *  <a href="https://github.com/binance/binance-futures-connector-python/tree/main/examples/um_futures/trade" rel="nofollow" target="_blank">Biblioteca de análise técnica em python</a> 
