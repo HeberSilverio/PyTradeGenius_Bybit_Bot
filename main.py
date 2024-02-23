@@ -22,12 +22,12 @@ contador = 0
 timeframe = 15 # 15 minutes
 
 # 0.012 means +1.2%, 0.009 is -0.9%
-tp = 0.03  # Take Profit +6%
-sl = 0.012  # Stop Loss -1,5%
+tp = 0.03  # Take Profit +3%
+sl = 0.012  # Stop Loss -1,2%
 volume = 10  # volume para uma ordem (se for 10 e a alavancagem for 10, então você coloca 1 usdt em uma posição)
 leverage = 10
 mode = 1  # 1 - Isolated, 0 - Cross
-qty = 3  # Quantidade de USDT por ordem
+qty = 10  # Quantidade de USDT por ordem
 
 
 # Configuração do telegram
@@ -52,11 +52,6 @@ def get_balance_usdt():
          )
       )
    
-# chamar a função para ver o saldo USDT na conta futuros
-
-# print("Saldo Conta de Futuros: $",get_balance_usdt()," USDT")
-# telegramBot.send_msg("Saldo Conta de Futuros: $"+str(get_balance_usdt()) +" USDT")
-
 
 # OBTER TODOS OS PARES USDT - usdⓈ-M do arquivo config
 def get_tickers():
@@ -77,8 +72,6 @@ def get_tickers():
                error.status_code, error.error_code, error.error_message
          )
       )   
-
-# print(get_tickers()) 
 
 
 # # Informe o symbol como parametros e terá as últimas 500 velas para intervalo informado
@@ -109,7 +102,6 @@ def klines(symbol):
          )
       )
 
-
 # Obtendo suas posições atuais. Retorna lista de símbolos com posições abertas
 def get_positions():
    try:
@@ -135,7 +127,6 @@ def get_pnl():
    except Exception as err:
       print(err)
 
-
 # Changing mode and leverage: 
 def set_mode(symbol):
    try:
@@ -149,6 +140,8 @@ def set_mode(symbol):
       print(resp)
    except Exception as err:
       print(err)
+
+print('Modo isolated? :',set_mode('ADAUSDT')) # ver o modo se isolado ou cruzado
 
 # # Funções que define a precisa de preço e quantidade
 # # Função 06 - Retorna o número de dígitos decimal para preço. BTC tem 1 casa decimal, XRP tem 4 casas decimais
@@ -173,7 +166,6 @@ def get_precisions(symbol):
       return price, qty
    except Exception as err:
         print(err)
-
 
 
 # Placing order with Market price. Placing TP and SL as well
@@ -228,8 +220,6 @@ def place_order_market(symbol, side):
 
 
 def bollinger_signal(symbol):
-   # Indique que queremos usar a variável global 'contador' dentro da função
-   global contador
    
    # Obtendo os dados das velas para o símbolo fornecido
    kl = klines(symbol)
@@ -248,8 +238,6 @@ def bollinger_signal(symbol):
          +"\nFechou ABAIXO da Bollinger"                
          +"\nBollinger Inferior..........."+str(format(float(lower_band.iloc[-1]),'.6f'))
          +"\n*Mínima*........................"+str(format(float(kl.Low.iloc[-1]),'.6f')))
-      
-      contador -= 1
       return 'up'
    
    # Verificando se a máxima do candle está acima da banda superior
@@ -258,19 +246,57 @@ def bollinger_signal(symbol):
          +"\n♨️Máxima *ACIMA* da Bollinger ♨️"
          +"\nBollinger Superior......."+str(format(float(upper_band.iloc[-1]),'.5f'))
          +"\n*Máxima*....................."+str(format(float(kl.High.iloc[-1]),'.5f')))
-      
-      contador -= 1
       return 'down'
       
    
    # Se não ultrapassar as bandas
    else:
-      contador += 1
-      telegramBot.send_msg("🟡 Em lateralidade= 🟡 {}".format(symbol))
-      print(format(contador),"Em lateralidade=",format(symbol))
-      # Incrementando o contador
-      
       return 'none'
+   
+ 
+# Obter séries de fechamentos de candle
+def get_close_low_series(symbol):
+   # Obtendo os dados históricos dos candles
+   kl = klines(symbol)
+   # Obtendo as séries de close e low
+   close_series = kl['Close']
+   low_series = kl['Low']
+   return close_series, low_series
+   
+# Cruzamento de médias
+def cruzandoMedias(close_series, low_series, symbol):
+   # Calculando as médias móveis simples para os três períodos diferentes e sources diferentes
+   sma_34_close = ta.trend.sma_indicator(close_series, window=34, fillna=False)
+   sma_12_low = ta.trend.sma_indicator(low_series, window=12, fillna=False)
+   sma_7_close = ta.trend.sma_indicator(close_series, window=7, fillna=False)
+
+   # Verificando a inclinação da média de 34 períodos
+   if sma_34_close.iloc[-1] > sma_34_close.iloc[-2] > sma_34_close.iloc[-3] > sma_34_close.iloc[-4]:
+      inclinacao_34 = 'up'
+   elif sma_34_close.iloc[-1] < sma_34_close.iloc[-2] < sma_34_close.iloc[-3] < sma_34_close.iloc[-4]:
+      inclinacao_34 = 'down'
+   else:
+      inclinacao_34 = 'none'
+
+   # Verificando as condições para os cruzamentos das médias
+   if sma_7_close.iloc[-3] < sma_12_low.iloc[-3] and sma_7_close.iloc[-1] > sma_12_low.iloc[-1]:
+      # Cruzamento de alta
+      if inclinacao_34 == 'up':
+         telegramBot.send_msg("🟢 === *COMPRAR {}* ===".format(symbol) +
+                              "\n💹 Cruzamento de alta 💹")
+         return 'up'
+   elif sma_7_close.iloc[-3] > sma_12_low.iloc[-3] and sma_7_close.iloc[-1] < sma_12_low.iloc[-1]:
+      # Cruzamento de baixa
+      if inclinacao_34 == 'down':
+         telegramBot.send_msg("🔴 === *VENDER {}* ===".format(symbol) +
+                              "\n♨️ Cruzamento de baixa ♨️")
+         return 'down'
+      
+   else:
+      # telegramBot.send_msg("🟡 Sem cruzamento 🟡 {}".format(symbol))
+      return 'none'
+
+
 
 max_pos = 5    # Max current orders
 symbols = get_tickers()     # getting all symbols from the Bybit Derivatives
@@ -296,29 +322,51 @@ while True:
                if len(positions) >= max_pos:
                   break
                
-               # Sinal para comprar ou vender
-               signal = bollinger_signal(elem)
-               
-               # Para sinal de compra
-               if signal == 'up':
-                  print('Sinal de COMPRA encontrado para ', elem)
+               # Verificando se já existe uma posição aberta para o símbolo atual
+               if elem not in positions:
                   
-                  # para envio de ordens
-                  set_mode(elem)
-                  sleep(2)
-                  place_order_market(elem, 'buy')
-                  sleep(5)
-               
-               # Para sinal de venda
-               if signal == 'down':
-                  print('Sinal de VENDA encontrado para ', elem)
-                  telegramBot.send_msg("Sinal de VENDA encontrado para " + str(elem))
+                  # Obtendo as séries de close e low para o símbolo atual
+                  close_series, low_series = get_close_low_series(elem)
                   
-                  # para envio de ordens de venda
-                  set_mode(elem)
-                  sleep(2)
-                  place_order_market(elem, 'sell')
-                  sleep(5)
+                  # Sinal para comprar ou vender com base nos indicadores
+                  signal1 = bollinger_signal(elem)
+                  # print("Sinal1: ",signal1)
+                  signal2 = cruzandoMedias(close_series, low_series, elem)
+                  #print("Sinal2: ",signal2)
+                 
+                  # Se houver um sinal válido em signal2, envie uma ordem com base nele
+                  if signal2 != 'none':
+                     if signal2 == 'up':
+                           print('Enviando ordem de COMPRA para ', elem, 'com base em cruzandoMedias')
+                           telegramBot.send_msg("Enviando ordem de COMPRA com base em cruzandoMedias para " + str(elem))
+                           set_mode(elem)
+                           sleep(2)
+                           place_order_market(elem, 'buy')
+                           sleep(5)
+                     elif signal2 == 'down':
+                           print('Enviando ordem de VENDA para ', elem, 'com base em cruzandoMedias')
+                           telegramBot.send_msg("Enviando ordem de VENDA com base em cruzandoMedias para " + str(elem))
+                           set_mode(elem)
+                           sleep(2)
+                           place_order_market(elem, 'sell')
+                           sleep(5)
+                  # Se não houver sinal válido em signal2, verifique signal1
+                  else:
+                     if signal1 != 'none':
+                           if signal1 == 'up':
+                              print('Enviando ordem de COMPRA para ', elem, 'com base em bollinger_signal')
+                              telegramBot.send_msg("Enviando ordem de COMPRA com base em bollinger_signal para " + str(elem))
+                              set_mode(elem)
+                              sleep(2)
+                              place_order_market(elem, 'buy')
+                              sleep(5)
+                           elif signal1 == 'down':
+                              print('Enviando ordem de VENDA para ', elem, 'com base em bollinger_signal')
+                              telegramBot.send_msg("Enviando ordem de VENDA com base em bollinger_signal para " + str(elem))
+                              set_mode(elem)
+                              sleep(2)
+                              place_order_market(elem, 'sell')
+                              sleep(5)
    
-   print('Esperar 3 minutos')
-   sleep(180)
+   print('Esperar 60 segundos')
+   sleep(60)

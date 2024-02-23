@@ -6,7 +6,7 @@ O robô de sinais **PyTradeGenius_Bybit_Bot** realiza o monitoramento dos **Múl
 
 ### Imagem do grupo do telegram
 <div align="center">
-<img src ="https://raw.githubusercontent.com/HeberSilverio/PyTradeGenius_Bybit_Bot/main/img/imageTelegram.JPG" alt="Image" style="max-width: 40%;">
+<img src ="https://raw.githubusercontent.com/HeberSilverio/PyTradeGenius_Bybit_Bot/main/img/imageTelegram.jpeg" alt="Image" style="max-width: 40%;">
 </div>
 
 ## ⌨️ Como executar o projeto
@@ -34,13 +34,13 @@ Desenvolvido por **Héber Silvério** </br>
 
 ## **MANUAL DE UTILIZAÇÃO**
 
-No arquivo **"config.py"** deverá ser inserida a **API_KEY** da sua conta Bybit juntamente de sua senha **API_ SECRET**. Ambos podem ser obtidos nas configurações da sua conta Bybit, adentrando na opção **API Management**.
+No arquivo **"config.py"** deverá ser inserida a **API_KEY** da sua conta Bybit juntamente de sua senha **API_ SECRET**. Ambos podem ser obtidos nas configurações da sua conta Bybit, adentrando na opção **API**.
 <div align="center">
 <img src = "https://raw.githubusercontent.com/HeberSilverio/PyHbSinais/main/img/secrets.png">
-</div>
+</div></br>
 
-</br>
 Ainda no arquivo **"config.py"**, para inserir o **TOKEN** é necessário criar um bot no Telegram utilizando o canal **BotFather**:
+
 <div align="center">
 <img src = "https://raw.githubusercontent.com/HeberSilverio/PyHbSinais/main/img/botfather.png" alt="Image" height="350" width="300">
 </div>
@@ -62,16 +62,12 @@ O número do Chat_Id aparece na string: {"message_id":xxx,"from":{"id":**Número
 
 </br></br>
 
-### Repositório GitHub - Bybit
-<a target="_blank" rel="noopener noreferrer" href="gif do vídeo">
-    <img src="" alt="Repositorio Bybit" style="max-width: 40%;">
-</a> </br>
+### API Docs e repositório GitHub/Bybit
+*  <a href="https://bybit-exchange.github.io/docs/" target="_blank">Bybit API Documentation</a> 
 
-*  <a href="" target="_blank">Api da Bybit</a> 
+* <a target="_blank" rel="noopener noreferrer" href="https://github.com/bybit-exchange/pybit">Official python SDK – pybit</a> 
 
 </br></br>
-
-
 
 ## **MANUAL DE DESENVOLVIMENTO**
 Inicie seu projeto instalando as bibliotecas necessárias
@@ -94,9 +90,10 @@ Instale a biblioteca de indicadores TA
 
 *  <a href="https://github.com/binance/binance-futures-connector-python/tree/main/examples/um_futures/trade" rel="nofollow" target="_blank">Biblioteca de análise técnica em python</a> 
 
+</br></br>
 
 **Esta enviando ordens corretamente**
 CORREÇÕES
 * Não está colocando ordens cruzadas
-* Está aumentando a posição se o candle ainda não fechou
 * Enviar no telegram as os lucros das posições em aberto
+* Está aumentando a posição se o candle ainda não fechou (Corrigido)
