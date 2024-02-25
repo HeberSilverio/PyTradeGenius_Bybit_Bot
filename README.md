@@ -55,7 +55,7 @@ O número do Chat_Id aparece na string: {"message_id":xxx,"from":{"id":**Número
 
 ### Vídeo Tutorial do projeto no youtube
 <a target="_blank" rel="noopener noreferrer" href="gif do vídeo">
-    <img src="https://raw.githubusercontent.com/HeberSilverio/PyTradeGenius_Bin_Bot/main/img/print_video.JPG" alt="Print Video" style="max-width: 40%;">
+    <img src="https://raw.githubusercontent.com/HeberSilverio/PyTradeGenius_Bin_Bot/main/img/print_video.JPG" alt="Print Video" style="width: 40%;">
 </a> </br>
 
 * <a href="https://youtu.be/YVnu7aSMaCM?si=mwc2suq6GYSAH8R0" rel="nofollow" target="_blank">Link do video tutorial</a> 
@@ -94,6 +94,9 @@ Instale a biblioteca de indicadores TA
 
 **Esta enviando ordens corretamente**
 CORREÇÕES
+* valor da compra
+* quantos centavos dará 5%
+
 * Não está colocando ordens cruzadas
 * Enviar no telegram as os lucros das posições em aberto
 * Está aumentando a posição se o candle ainda não fechou (Corrigido)

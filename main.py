@@ -7,7 +7,7 @@ from time import sleep
 from binance.error import ClientError
 import ta
 from ta.volatility import BollingerBands
-
+from datetime import datetime
 
 # Conexção com a conta da Bybit
 session = HTTP(
@@ -18,12 +18,14 @@ session = HTTP(
 # Inicializando o contador
 contador = 0
 
-# Tempo gráfico para negociações
-timeframe = 15 # 15 minutes
+#Define data e hora atuais
+data_e_hora_atuais = datetime.now()
+data_e_hora_em_texto = data_e_hora_atuais.strftime('%d/%m/%Y - %Hh:%Mm') 
 
-# 0.012 means +1.2%, 0.009 is -0.9%
-tp = 0.03  # Take Profit +3%
-sl = 0.012  # Stop Loss -1,2%
+
+timeframe = 60 # 15 minutes # Tempo gráfico para negociações
+tp = 0.05  # Take Profit +5%
+sl = 0.015  # Stop Loss -1,2%
 volume = 10  # volume para uma ordem (se for 10 e a alavancagem for 10, então você coloca 1 usdt em uma posição)
 leverage = 10
 mode = 1  # 1 - Isolated, 0 - Cross
@@ -32,7 +34,8 @@ qty = 10  # Quantidade de USDT por ordem
 
 # Configuração do telegram
 telegramBot = tlg.BotTelegram(config.TOKEN,config.CHAT_ID)
-telegramBot.send_msg("=== Inicio do bot PyTradeGenius BYBIT ===")
+
+
 
 # OBTER DADOS DA CONTA DA Bybit
 def get_balance_usdt():
@@ -113,8 +116,15 @@ def get_positions():
       for elem in resp:
          pos.append(elem['symbol'])
       return pos
-   except Exception as err:
-      print(err)
+   except ClientError as error:
+      print(
+         "Erro encontrado. status: {}, código do erro: {}, mensagem do erro: {}".format(
+               error.status_code, error.error_code, error.error_message
+         )
+      )
+   # except Exception as err:
+      # print(err)
+      # print("Erro encontrado na função get_positions: {}".format(err))
 
 # Getting last 50 PnL. I used it to check strategies performance
 def get_pnl():
@@ -124,10 +134,16 @@ def get_pnl():
       for elem in resp:
          pnl += float(elem['closedPnl'])
       return pnl
-   except Exception as err:
-      print(err)
+   except ClientError as error:
+      print(
+         "Erro encontrado. status: {}, código do erro: {}, mensagem do erro: {}".format(
+               error.status_code, error.error_code, error.error_message
+         )
+      )
+   # except Exception as err:
+   #    print(err)
 
-# Changing mode and leverage: 
+# Alterando modo e alavancagem:
 def set_mode(symbol):
    try:
       resp = session.switch_margin_mode(
@@ -141,7 +157,6 @@ def set_mode(symbol):
    except Exception as err:
       print(err)
 
-print('Modo isolated? :',set_mode('ADAUSDT')) # ver o modo se isolado ou cruzado
 
 # # Funções que define a precisa de preço e quantidade
 # # Função 06 - Retorna o número de dígitos decimal para preço. BTC tem 1 casa decimal, XRP tem 4 casas decimais
@@ -164,11 +179,20 @@ def get_precisions(symbol):
          qty = 0
 
       return price, qty
-   except Exception as err:
-        print(err)
+   except ClientError as error:
+      print(
+         "Erro encontrado. status: {}, código do erro: {}, mensagem do erro: {}".format(
+               error.status_code, error.error_code, error.error_message
+         )
+      )
+   # except Exception as err:
+   #      print(err)
 
 
-# Placing order with Market price. Placing TP and SL as well
+
+# Definir as variáveis globalmente ou em um escopo superior
+global_order_data = {}
+# Fazer pedido com preço de mercado. Colocando TP e SL também
 def place_order_market(symbol, side):
    price_precision = get_precisions(symbol)[0]
    qty_precision = get_precisions(symbol)[1]
@@ -196,6 +220,26 @@ def place_order_market(symbol, side):
                slTriggerBy='Market'
          )
          print(resp)
+         
+         # # Obtendo os dados das velas para o símbolo fornecido
+         # kl = klines(symbol)
+         # close=kl.Close
+         # cripto = symbol
+         # takeProfit = tp_price  # Assumindo que tp_price e sl_price foram definidos em algum lugar antes
+         # stopLoss = sl_price,
+         # quantidade = order_qty  # Assumindo que order_qty foi definido em algum lugar antes
+         # Variacao = close - takeProfit
+         # telegramBot.send_msg("🅿🅞🆂🅸🆃🅸🅞🅽 🅸🅽🅵🅞🆁🅼🅐🆃🅸🅞🅽"
+         #                      +"\n"
+         #                      +"\n𝗖𝗼𝗶𝗻 𝗡𝗮𝗺𝗲: "+ str(cripto) # Nome da moeda
+         #                      +"\n𝗛𝗼𝗿𝗮́𝗿𝗶𝗼 𝗱𝗲 𝗶𝗻𝗶𝗰𝗶𝗼:  " + data_e_hora_em_texto # O momento exato que a função foi chamada e que não se repete
+         #                      +"\n𝗟𝗮𝗱𝗼: Compra" # O momento exato que a função foi chamada e que não se repete
+         #                      +"\n𝗣𝗿𝗲𝗰̧𝗼 𝗱𝗲 𝗲𝗻𝘁𝗿𝗮𝗱𝗮: "+str(format(float(close),'.4f')) # O preço de entrada, o valor da compra
+         #                      +"\n𝗧𝗮𝗸𝗲 𝗣𝗿𝗼𝗳𝗶𝘁: "+str(format(float(takeProfit),'.4f')) # Take profit, o valor da ordem de lucro
+         #                      +"\n𝗦𝘁𝗼𝗽 𝗹𝗼𝘀𝘀: "+str(format(float(stopLoss),'.4f'))   # Stop loss, o valor da ordem de prejuízo máximo 
+         #                      +"\n𝗩𝗮𝗿𝗶𝗮𝗰̧𝗮̃𝗼 : "+str(format(float(Variacao),'.2f')) # Quantos centavos é a variação entre o valor da entrada e o valor da ordem de lucro
+         #                      +"\n𝗧𝗮𝗺𝗮𝗻𝗵𝗼 𝗱𝗮 𝗽𝗼𝘀𝗶𝗰̧𝗮̃𝗼: $"+str(quantidade) +" USDT") # Valor financeiro da ordem
+         
       except Exception as err:
          print(err)
 
@@ -215,6 +259,25 @@ def place_order_market(symbol, side):
                slTriggerBy='Market'
          )
          print(resp)
+         # # Obtendo os dados das velas para o símbolo fornecido
+         # kl = klines(symbol)
+         # close=kl.Close
+         # cripto = symbol
+         # takeProfit = tp_price  # Assumindo que tp_price e sl_price foram definidos em algum lugar antes
+         # stopLoss = sl_price,
+         # quantidade = order_qty  # Assumindo que order_qty foi definido em algum lugar antes
+         # Variacao = close - takeProfit
+         # telegramBot.send_msg("🅿🅞🆂🅸🆃🅸🅞🅽 🅸🅽🅵🅞🆁🅼🅐🆃🅸🅞🅽"
+         #                      +"\n"
+         #                      +"\n𝗖𝗼𝗶𝗻 𝗡𝗮𝗺𝗲: "+ str(cripto) # Nome da moeda
+         #                      +"\n𝗛𝗼𝗿𝗮́𝗿𝗶𝗼 𝗱𝗲 𝗶𝗻𝗶𝗰𝗶𝗼:  " + data_e_hora_em_texto # O momento exato que a função foi chamada e que não se repete
+         #                      +"\n𝗟𝗮𝗱𝗼: Venda" # O momento exato que a função foi chamada e que não se repete
+         #                      +"\n𝗣𝗿𝗲𝗰̧𝗼 𝗱𝗲 𝗲𝗻𝘁𝗿𝗮𝗱𝗮: "+str(format(float(close),'.4f')) # O preço de entrada, o valor da compra
+         #                      +"\n𝗧𝗮𝗸𝗲 𝗣𝗿𝗼𝗳𝗶𝘁: "+str(format(float(takeProfit),'.4f')) # Take profit, o valor da ordem de lucro
+         #                      +"\n𝗦𝘁𝗼𝗽 𝗹𝗼𝘀𝘀: "+str(format(float(stopLoss),'.4f'))   # Stop loss, o valor da ordem de prejuízo máximo 
+         #                      +"\n𝗩𝗮𝗿𝗶𝗮𝗰̧𝗮̃𝗼 : "+str(format(float(Variacao),'.2f')) # Quantos centavos é a variação entre o valor da entrada e o valor da ordem de lucro
+         #                      +"\n𝗧𝗮𝗺𝗮𝗻𝗵𝗼 𝗱𝗮 𝗽𝗼𝘀𝗶𝗰̧𝗮̃𝗼: $"+str(quantidade) +" USDT") # Valor financeiro da ordem
+         
       except Exception as err:
          print(err)
 
@@ -251,6 +314,7 @@ def bollinger_signal(symbol):
    
    # Se não ultrapassar as bandas
    else:
+      print("lateral= "+str(symbol))
       return 'none'
    
  
@@ -267,7 +331,7 @@ def get_close_low_series(symbol):
 def cruzandoMedias(close_series, low_series, symbol):
    # Calculando as médias móveis simples para os três períodos diferentes e sources diferentes
    sma_34_close = ta.trend.sma_indicator(close_series, window=34, fillna=False)
-   sma_12_low = ta.trend.sma_indicator(low_series, window=12, fillna=False)
+   sma_14_low = ta.trend.sma_indicator(low_series, window=14, fillna=False)
    sma_7_close = ta.trend.sma_indicator(close_series, window=7, fillna=False)
 
    # Verificando a inclinação da média de 34 períodos
@@ -279,13 +343,13 @@ def cruzandoMedias(close_series, low_series, symbol):
       inclinacao_34 = 'none'
 
    # Verificando as condições para os cruzamentos das médias
-   if sma_7_close.iloc[-3] < sma_12_low.iloc[-3] and sma_7_close.iloc[-1] > sma_12_low.iloc[-1]:
+   if sma_7_close.iloc[-3] < sma_14_low.iloc[-3] and sma_7_close.iloc[-1] > sma_14_low.iloc[-1]:
       # Cruzamento de alta
       if inclinacao_34 == 'up':
          telegramBot.send_msg("🟢 === *COMPRAR {}* ===".format(symbol) +
                               "\n💹 Cruzamento de alta 💹")
          return 'up'
-   elif sma_7_close.iloc[-3] > sma_12_low.iloc[-3] and sma_7_close.iloc[-1] < sma_12_low.iloc[-1]:
+   elif sma_7_close.iloc[-3] > sma_14_low.iloc[-3] and sma_7_close.iloc[-1] < sma_14_low.iloc[-1]:
       # Cruzamento de baixa
       if inclinacao_34 == 'down':
          telegramBot.send_msg("🔴 === *VENDER {}* ===".format(symbol) +
@@ -298,6 +362,16 @@ def cruzandoMedias(close_series, low_series, symbol):
 
 
 
+#configurações da primeira mensagem
+balance = get_balance_usdt()
+sleep(1)      
+telegramBot.send_msg("=== 𝐈𝐍𝐈𝐂𝐈𝐎 𝐃𝐎 𝐁𝐎𝐓 ==="
+                     +"\n   𝐏𝐲𝐓𝐫𝐚𝐝𝐞𝐆𝐞𝐧𝐢𝐮𝐬 🅱🆈🅱🅸🆃"
+                     +"\n\n"
+                     +"\nTIME:  " + data_e_hora_em_texto 
+                     +"\n𝗦𝗔𝗟𝗗𝗢 𝗗𝗔 𝗖𝗢𝗡𝗧𝗔: $"+str(format(float(balance),'.2f')) +" USDT"
+                     +"\n*Tempo Gráfico: {}*".format(timeframe))
+
 max_pos = 5    # Max current orders
 symbols = get_tickers()     # getting all symbols from the Bybit Derivatives
 while True:
@@ -309,12 +383,12 @@ while True:
       telegramBot.send_msg("Não foi possível conectar à API. Verifique IP, restrições ou espere algum tempo")
    if balance != None:
       print("Meu saldo é: ", balance, " USDT")
-      telegramBot.send_msg("Saldo Conta de Futuros: $"+str(balance) +" USDT")
+      # telegramBot.send_msg("Saldo Conta de Futuros: $"+str(balance) +" USDT")
       
       positions = get_positions()
-      print(f'Você tem {positions} posições abertas')
-      telegramBot.send_msg("Você tem {} posições abertas".format(positions))
-      
+      for coin in positions:
+         print(f'Você tem {positions} posições abertas')
+         
       if len(positions) < max_pos:
             # Checking every symbol from the symbols list:
             for elem in symbols:
@@ -332,12 +406,12 @@ while True:
                   signal1 = bollinger_signal(elem)
                   # print("Sinal1: ",signal1)
                   signal2 = cruzandoMedias(close_series, low_series, elem)
-                  #print("Sinal2: ",signal2)
+                  # print("Sinal2: ",signal2)
                  
                   # Se houver um sinal válido em signal2, envie uma ordem com base nele
                   if signal2 != 'none':
                      if signal2 == 'up':
-                           print('Enviando ordem de COMPRA para ', elem, 'com base em cruzandoMedias')
+                           print('Enviando ordem de COMPRA para', elem, 'com base em cruzandoMedias')
                            telegramBot.send_msg("Enviando ordem de COMPRA com base em cruzandoMedias para " + str(elem))
                            set_mode(elem)
                            sleep(2)
