@@ -24,12 +24,12 @@ data_e_hora_em_texto = data_e_hora_atuais.strftime('%d/%m/%Y - %Hh:%Mm')
 
 
 timeframe = 60 # 15 minutes # Tempo gráfico para negociações
-tp = 0.05  # Take Profit +5%
-sl = 0.015  # Stop Loss -1,2%
+tp = 0.08  # Take Profit +8%
+sl = 0.02  # Stop Loss -2%
 volume = 10  # volume para uma ordem (se for 10 e a alavancagem for 10, então você coloca 1 usdt em uma posição)
 leverage = 10
 mode = 1  # 1 - Isolated, 0 - Cross
-qty = 10  # Quantidade de USDT por ordem
+qty = 15  # Quantidade de USDT por ordem
 
 
 # Configuração do telegram
@@ -221,24 +221,22 @@ def place_order_market(symbol, side):
          )
          print(resp)
          
-         # # Obtendo os dados das velas para o símbolo fornecido
-         # kl = klines(symbol)
-         # close=kl.Close
-         # cripto = symbol
-         # takeProfit = tp_price  # Assumindo que tp_price e sl_price foram definidos em algum lugar antes
-         # stopLoss = sl_price,
-         # quantidade = order_qty  # Assumindo que order_qty foi definido em algum lugar antes
-         # Variacao = close - takeProfit
-         # telegramBot.send_msg("🅿🅞🆂🅸🆃🅸🅞🅽 🅸🅽🅵🅞🆁🅼🅐🆃🅸🅞🅽"
-         #                      +"\n"
-         #                      +"\n𝗖𝗼𝗶𝗻 𝗡𝗮𝗺𝗲: "+ str(cripto) # Nome da moeda
-         #                      +"\n𝗛𝗼𝗿𝗮́𝗿𝗶𝗼 𝗱𝗲 𝗶𝗻𝗶𝗰𝗶𝗼:  " + data_e_hora_em_texto # O momento exato que a função foi chamada e que não se repete
-         #                      +"\n𝗟𝗮𝗱𝗼: Compra" # O momento exato que a função foi chamada e que não se repete
-         #                      +"\n𝗣𝗿𝗲𝗰̧𝗼 𝗱𝗲 𝗲𝗻𝘁𝗿𝗮𝗱𝗮: "+str(format(float(close),'.4f')) # O preço de entrada, o valor da compra
-         #                      +"\n𝗧𝗮𝗸𝗲 𝗣𝗿𝗼𝗳𝗶𝘁: "+str(format(float(takeProfit),'.4f')) # Take profit, o valor da ordem de lucro
-         #                      +"\n𝗦𝘁𝗼𝗽 𝗹𝗼𝘀𝘀: "+str(format(float(stopLoss),'.4f'))   # Stop loss, o valor da ordem de prejuízo máximo 
-         #                      +"\n𝗩𝗮𝗿𝗶𝗮𝗰̧𝗮̃𝗼 : "+str(format(float(Variacao),'.2f')) # Quantos centavos é a variação entre o valor da entrada e o valor da ordem de lucro
-         #                      +"\n𝗧𝗮𝗺𝗮𝗻𝗵𝗼 𝗱𝗮 𝗽𝗼𝘀𝗶𝗰̧𝗮̃𝗼: $"+str(quantidade) +" USDT") # Valor financeiro da ordem
+         # Obtendo os dados das velas para o símbolo fornecido
+         cripto = symbol
+         takeProfit = tp_price  # Assumindo que tp_price e sl_price foram definidos em algum lugar antes
+         stopLoss = sl_price,
+         quantidade = order_qty  # Assumindo que order_qty foi definido em algum lugar antes
+         
+         telegramBot.send_msg("🅿🅞🆂🅸🆃🅸🅞🅽 🅸🅽🅵🅞🆁🅼🅐🆃🅸🅞🅽"
+                              +"\n"
+                              +"\n𝗖𝗼𝗶𝗻 𝗡𝗮𝗺𝗲: "+ str(cripto) # Nome da moeda
+                              +"\nTime:  " + data_e_hora_em_texto # O momento exato que a função foi chamada e que não se repete
+                              +"\n𝗟𝗮𝗱𝗼: Compra" # O momento exato que a função foi chamada e que não se repete
+                              # +"\n𝗣𝗿𝗲𝗰̧𝗼 𝗱𝗲 𝗲𝗻𝘁𝗿𝗮𝗱𝗮: "+str(close) # O preço de entrada, o valor da compra
+                              +"\n𝗧𝗮𝗸𝗲 𝗣𝗿𝗼𝗳𝗶𝘁: "+str(takeProfit) # Take profit, o valor da ordem de lucro
+                              +"\n𝗦𝘁𝗼𝗽 𝗹𝗼𝘀𝘀: "+str(stopLoss)   # Stop loss, o valor da ordem de prejuízo máximo 
+                              # +"\n𝗩𝗮𝗿𝗶𝗮𝗰̧𝗮̃𝗼 : "+str(Variacao) # Quantos centavos é a variação entre o valor da entrada e o valor da ordem de lucro
+                              +"\n𝗧𝗮𝗺𝗮𝗻𝗵𝗼 𝗱𝗮 𝗽𝗼𝘀𝗶𝗰̧𝗮̃𝗼: $"+str(quantidade) +" USDT") # Valor financeiro da ordem
          
       except Exception as err:
          print(err)
@@ -259,24 +257,23 @@ def place_order_market(symbol, side):
                slTriggerBy='Market'
          )
          print(resp)
-         # # Obtendo os dados das velas para o símbolo fornecido
-         # kl = klines(symbol)
-         # close=kl.Close
-         # cripto = symbol
-         # takeProfit = tp_price  # Assumindo que tp_price e sl_price foram definidos em algum lugar antes
-         # stopLoss = sl_price,
-         # quantidade = order_qty  # Assumindo que order_qty foi definido em algum lugar antes
-         # Variacao = close - takeProfit
-         # telegramBot.send_msg("🅿🅞🆂🅸🆃🅸🅞🅽 🅸🅽🅵🅞🆁🅼🅐🆃🅸🅞🅽"
-         #                      +"\n"
-         #                      +"\n𝗖𝗼𝗶𝗻 𝗡𝗮𝗺𝗲: "+ str(cripto) # Nome da moeda
-         #                      +"\n𝗛𝗼𝗿𝗮́𝗿𝗶𝗼 𝗱𝗲 𝗶𝗻𝗶𝗰𝗶𝗼:  " + data_e_hora_em_texto # O momento exato que a função foi chamada e que não se repete
-         #                      +"\n𝗟𝗮𝗱𝗼: Venda" # O momento exato que a função foi chamada e que não se repete
-         #                      +"\n𝗣𝗿𝗲𝗰̧𝗼 𝗱𝗲 𝗲𝗻𝘁𝗿𝗮𝗱𝗮: "+str(format(float(close),'.4f')) # O preço de entrada, o valor da compra
-         #                      +"\n𝗧𝗮𝗸𝗲 𝗣𝗿𝗼𝗳𝗶𝘁: "+str(format(float(takeProfit),'.4f')) # Take profit, o valor da ordem de lucro
-         #                      +"\n𝗦𝘁𝗼𝗽 𝗹𝗼𝘀𝘀: "+str(format(float(stopLoss),'.4f'))   # Stop loss, o valor da ordem de prejuízo máximo 
-         #                      +"\n𝗩𝗮𝗿𝗶𝗮𝗰̧𝗮̃𝗼 : "+str(format(float(Variacao),'.2f')) # Quantos centavos é a variação entre o valor da entrada e o valor da ordem de lucro
-         #                      +"\n𝗧𝗮𝗺𝗮𝗻𝗵𝗼 𝗱𝗮 𝗽𝗼𝘀𝗶𝗰̧𝗮̃𝗼: $"+str(quantidade) +" USDT") # Valor financeiro da ordem
+         # Obtendo os dados das velas para o símbolo fornecido
+         
+         cripto = symbol
+         takeProfit = tp_price  # Assumindo que tp_price e sl_price foram definidos em algum lugar antes
+         stopLoss = sl_price,
+         quantidade = order_qty  # Assumindo que order_qty foi definido em algum lugar antes
+         
+         telegramBot.send_msg("🅿🅞🆂🅸🆃🅸🅞🅽 🅸🅽🅵🅞🆁🅼🅐🆃🅸🅞🅽"
+                              +"\n"
+                              +"\n𝗖𝗼𝗶𝗻 𝗡𝗮𝗺𝗲: "+ str(cripto) # Nome da moeda
+                              +"\n𝗛𝗼𝗿𝗮́𝗿𝗶𝗼 𝗱𝗲 𝗶𝗻𝗶𝗰𝗶𝗼:  " + data_e_hora_em_texto # O momento exato que a função foi chamada e que não se repete
+                              +"\n𝗟𝗮𝗱𝗼: Venda" # O momento exato que a função foi chamada e que não se repete
+                              # +"\n𝗣𝗿𝗲𝗰̧𝗼 𝗱𝗲 𝗲𝗻𝘁𝗿𝗮𝗱𝗮: "+str(close) # O preço de entrada, o valor da compra
+                              +"\n𝗧𝗮𝗸𝗲 𝗣𝗿𝗼𝗳𝗶𝘁: "+str(takeProfit) # Take profit, o valor da ordem de lucro
+                              +"\n𝗦𝘁𝗼𝗽 𝗹𝗼𝘀𝘀: "+str(stopLoss)  # Stop loss, o valor da ordem de prejuízo máximo 
+                              # +"\n𝗩𝗮𝗿𝗶𝗮𝗰̧𝗮̃𝗼 : "+str(Variacao) # Quantos centavos é a variação entre o valor da entrada e o valor da ordem de lucro
+                              +"\n𝗧𝗮𝗺𝗮𝗻𝗵𝗼 𝗱𝗮 𝗽𝗼𝘀𝗶𝗰̧𝗮̃𝗼: $"+str(quantidade) +" USDT") # Valor financeiro da ordem
          
       except Exception as err:
          print(err)
@@ -297,8 +294,8 @@ def bollinger_signal(symbol):
    # Verificando se a mínima do candle está abaixo da banda inferior
    if kl.Low.iloc[-1] < lower_band.iloc[-1]:
       telegramBot.send_msg("=== *COMPRAR {}* ===".format(symbol)
-         +"\n🛤️ *Mínima *ABAIXO* da banda inferior* 🛤️"
-         +"\nFechou ABAIXO da Bollinger"                
+         +"\n🟢 *Mínima ABAIXO da banda inferior*"
+         +"\n"                
          +"\nBollinger Inferior..........."+str(format(float(lower_band.iloc[-1]),'.6f'))
          +"\n*Mínima*........................"+str(format(float(kl.Low.iloc[-1]),'.6f')))
       return 'up'
@@ -366,13 +363,13 @@ def cruzandoMedias(close_series, low_series, symbol):
 balance = get_balance_usdt()
 sleep(1)      
 telegramBot.send_msg("=== 𝐈𝐍𝐈𝐂𝐈𝐎 𝐃𝐎 𝐁𝐎𝐓 ==="
-                     +"\n   𝐏𝐲𝐓𝐫𝐚𝐝𝐞𝐆𝐞𝐧𝐢𝐮𝐬 🅱🆈🅱🅸🆃"
+                     +"\n𝐏𝐲𝐓𝐫𝐚𝐝𝐞𝐆𝐞𝐧𝐢𝐮𝐬 🅱🆈🅱🅸🆃"
                      +"\n\n"
                      +"\nTIME:  " + data_e_hora_em_texto 
                      +"\n𝗦𝗔𝗟𝗗𝗢 𝗗𝗔 𝗖𝗢𝗡𝗧𝗔: $"+str(format(float(balance),'.2f')) +" USDT"
                      +"\n*Tempo Gráfico: {}*".format(timeframe))
 
-max_pos = 5    # Max current orders
+max_pos = 15    # Max current orders
 symbols = get_tickers()     # getting all symbols from the Bybit Derivatives
 while True:
    # precisamos obter equilíbrio para verificar se a conexão está boa ou se você tem todas as permissões necessárias
@@ -386,8 +383,9 @@ while True:
       # telegramBot.send_msg("Saldo Conta de Futuros: $"+str(balance) +" USDT")
       
       positions = get_positions()
+      print(f'Você tem '+str(len(positions)), "posições abertas")
       for coin in positions:
-         print(f'Você tem {positions} posições abertas')
+         print(f'Você tem posição aberta em: {coin}')
          
       if len(positions) < max_pos:
             # Checking every symbol from the symbols list:
@@ -414,6 +412,8 @@ while True:
                            print('Enviando ordem de COMPRA para', elem, 'com base em cruzandoMedias')
                            telegramBot.send_msg("Enviando ordem de COMPRA com base em cruzandoMedias para " + str(elem))
                            set_mode(elem)
+                           telegramBot.send_msg("COMPRA enviada Status= OK"
+                                                +"\n-----------------------------------")
                            sleep(2)
                            place_order_market(elem, 'buy')
                            sleep(5)
@@ -421,6 +421,8 @@ while True:
                            print('Enviando ordem de VENDA para ', elem, 'com base em cruzandoMedias')
                            telegramBot.send_msg("Enviando ordem de VENDA com base em cruzandoMedias para " + str(elem))
                            set_mode(elem)
+                           telegramBot.send_msg("Ordem de VENDA envida Status= OK"
+                                                +"\n-----------------------------------")
                            sleep(2)
                            place_order_market(elem, 'sell')
                            sleep(5)
@@ -431,6 +433,8 @@ while True:
                               print('Enviando ordem de COMPRA para ', elem, 'com base em bollinger_signal')
                               telegramBot.send_msg("Enviando ordem de COMPRA com base em bollinger_signal para " + str(elem))
                               set_mode(elem)
+                              telegramBot.send_msg("COMPRA envida Status= OK"
+                                                   +"\n-----------------------------------")
                               sleep(2)
                               place_order_market(elem, 'buy')
                               sleep(5)
@@ -438,9 +442,11 @@ while True:
                               print('Enviando ordem de VENDA para ', elem, 'com base em bollinger_signal')
                               telegramBot.send_msg("Enviando ordem de VENDA com base em bollinger_signal para " + str(elem))
                               set_mode(elem)
+                              telegramBot.send_msg("Ordem de VENDA envida Status= OK"
+                                                   +"\n-----------------------------------")
                               sleep(2)
                               place_order_market(elem, 'sell')
                               sleep(5)
    
-   print('Esperar 60 segundos')
-   sleep(60)
+   print('Esperar 2 minutos')
+   sleep(120)
